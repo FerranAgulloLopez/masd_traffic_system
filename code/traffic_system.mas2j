@@ -1,0 +1,30 @@
+/*
+    traffic_system
+    ---------------------------
+
+    Jason Project File
+
+    This file defines the initial state of the MAS
+
+    Jason 2.5.1
+    May 14, 2021 - 13:46:19
+*/
+
+MAS traffic_system {
+
+    infrastructure: Jade
+
+    environment: MainEnvironment(2, 1)  // rows, columns
+	
+	//executionControl: ExecutionController
+
+    agents:
+        intersection ./agents/intersection.asl #2;
+
+        road ./agents/road.asl;
+
+        problemSolver ./agents/problemSolver.asl;
+		
+	classpath: "./*.jar";
+
+}
