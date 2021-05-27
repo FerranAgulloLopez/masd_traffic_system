@@ -10,9 +10,11 @@ import javax.swing.*;
 public class TrafficView extends JFrame {
 	
     private Logger logger = Logger.getLogger("traffic_system.mas2j." + TrafficView.class.getName());	
+	private MainPanel mainPanel;
 
     public TrafficView(int rows, int columns, TrafficModel model) {
-		add(new MainPanel(rows, columns, model));
+		this.mainPanel = new MainPanel(rows, columns, model);
+		add(this.mainPanel);
         
         setTitle("Traffic System");
         setSize(350, 250);
@@ -20,6 +22,8 @@ public class TrafficView extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 	
-	//public generateRouteFailure(int intersection1_key, intersection2_key);
+	public void rePaint() {
+		mainPanel.repaint();
+	}
 	
 }

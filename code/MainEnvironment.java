@@ -12,6 +12,7 @@ public class MainEnvironment extends TimeSteppedEnvironment {
     private Logger logger = Logger.getLogger("traffic_system.mas2j." + MainEnvironment.class.getName());
 
 	private TrafficModel model;
+	private TrafficView view;
 
     /** Called before the MAS execution with the args informed in .mas2j */
     @Override
@@ -20,6 +21,9 @@ public class MainEnvironment extends TimeSteppedEnvironment {
         setOverActionsPolicy(OverActionsPolicy.queue);
 		
 		this.model = new TrafficModel(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
+		this.view = new TrafficView(this.model.getRows(), this.model.getColumns(), this.model);
+		this.view.setVisible(true);
+		
 		this.model.generateRouteFailure();
 		this.updatePercepts();
     }
@@ -60,8 +64,15 @@ public class MainEnvironment extends TimeSteppedEnvironment {
     protected void stepStarted(int step) {
         logger.info("start step " + step);
 		if (this.model != null) {
+			this.view.repaint();
+			try {
+				// to wait for painting to be done
+				Thread.sleep(2000);  // TODO improve!!!
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			this.model.moveVehicles();
-			this.updatePercepts();	
+			this.updatePercepts();
 		}
     }
 }

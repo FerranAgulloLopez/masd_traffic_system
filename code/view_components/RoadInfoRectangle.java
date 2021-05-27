@@ -44,14 +44,21 @@ public class RoadInfoRectangle {
 		g2d.fill(rectangle);
 		g2d.setPaint(Color.black);
 		g2d.draw(rectangle);
-		g2d.drawString(this.rectangle_text1, x_corner + this.text_lateral_space, y_corner + this.char_height);
-		if (road.getRoadFailure() == false) { 
-			g2d.drawString(this.rectangle_text2_1, x_corner + this.text_lateral_space, y_corner + this.char_height * 2);
+		String text = this.rectangle_text1.substring(0, this.rectangle_text1.length() - 1) + road.getNumberVehicles();
+		if (road.getNumberVehicles() > 0) {
+			g2d.setColor(Color.blue);
+			g2d.drawString(text, x_corner + this.text_lateral_space, y_corner + this.char_height);
+			g2d.setColor(Color.black);
 		} else {
-			g2d.drawString(this.rectangle_text2_2, x_corner + this.text_lateral_space, y_corner + this.char_height * 2);
+			g2d.drawString(text, x_corner + this.text_lateral_space, y_corner + this.char_height);
 		}
-		//System.out.print(road == null);
-		//System.out.print("----------------------------------");
+		if (road.getRoadFailure()) {
+			g2d.setColor(Color.red);
+			g2d.drawString(this.rectangle_text2_2, x_corner + this.text_lateral_space, y_corner + this.char_height * 2);
+			g2d.setColor(Color.black);
+		} else {
+			g2d.drawString(this.rectangle_text2_1, x_corner + this.text_lateral_space, y_corner + this.char_height * 2);
+		}
 	}
 	
 	public float getRectangleHeight() {
@@ -60,5 +67,13 @@ public class RoadInfoRectangle {
 	
 	public float getRectangleWidth() {
 		return this.rectangle_width;
+	}
+	
+	public int computeYRectangleCorner(float height_split_size, int row) {
+		return Math.round(height_split_size * row + height_split_size / 2 - this.rectangle_height / 2);
+	}
+	
+	public int computeXRectangleCorner(float width_split_size, int column) {
+		return Math.round(width_split_size * column - this.rectangle_width / 2);
 	}
 }

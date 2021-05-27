@@ -12,6 +12,7 @@ public class MainPanel extends JPanel {
 	private int rows;
 	private int columns;
 	private TrafficModel model;
+	private RoadInfoRectangle roadInfoRectangle;
 	
 	public MainPanel(int rows, int columns, TrafficModel model) {			
 		this.rows = rows;
@@ -40,7 +41,7 @@ public class MainPanel extends JPanel {
 		float width_split_size = total_width / (this.columns - 1);
 		float edge_free_space = 10;
 		BasicStroke lineStroke = new BasicStroke(3.0f);
-		RoadInfoRectangle roadInfoRectangles = new RoadInfoRectangle(g2d, total_height, total_width);
+		this.roadInfoRectangle = new RoadInfoRectangle(g2d, total_height, total_width);
 		
 		// draw horizontal lines
 		for (int row = 0; row < (this.rows - 1); ++row) {
@@ -55,17 +56,21 @@ public class MainPanel extends JPanel {
 			float width = column * width_split_size;
 			g2d.setStroke(lineStroke);
 			g2d.setPaint(Color.black);
-			g2d.draw(new Line2D.Double(width, edge_free_space, width, total_height- edge_free_space));
+			g2d.draw(new Line2D.Double(width, edge_free_space, width, total_height - edge_free_space));
 			
 			// draw info rectangles
-			int x_rectangle_corner = Math.round(width_split_size * column - roadInfoRectangles.getRectangleWidth() / 2);
+			int x_rectangle_corner = this.roadInfoRectangle.computeXRectangleCorner(width_split_size, column);
 			for (int row = 0; row < (this.rows - 1); ++row) {
-				int y_rectangle_corner = Math.round(height_split_size * row + height_split_size / 2 - roadInfoRectangles.getRectangleHeight() / 2);
-				Road road = this.model.getRoads().get(Road.generateId(true, row, column));
-				roadInfoRectangles.draw(y_rectangle_corner, x_rectangle_corner, road);				
+				int y_rectangle_corner = this.roadInfoRectangle.computeYRectangleCorner(height_split_size, row);
+				this.drawInfoRectangle(y_rectangle_corner, x_rectangle_corner, true, row, column);		
 			}
 		}
-
+	}
+	
+	private void drawInfoRectangle(int y_rectangle_corner, int x_rectangle_corner, boolean isVertical, int row, int column)  {
+		Road road = this.model.getRoads().get(Road.generateId(isVertical, row, column));
+		System.out.print(road + " " + row + " " + column);
+		this.roadInfoRectangle.draw(y_rectangle_corner, x_rectangle_corner, road);
 	}
 
 	@Override

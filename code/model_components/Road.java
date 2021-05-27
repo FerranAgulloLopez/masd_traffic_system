@@ -38,13 +38,28 @@ public class Road {
 		return this.roadFailure;
 	}
 	
+	public void addVehicle() {
+		this.numberVehicles += 1;
+	}
+	
+	public void deleteVehicle() {
+		this.numberVehicles -= 1;
+	}
+	
+	public int getNumberVehicles() {
+		return this.numberVehicles;
+	}
+	
 	public boolean isInEdge() {
 		return (this.row == 0 || this.column == 0 || this.row == (numberRows - 2) || this.column == (numberColumns - 1)) ? true : false;
 	}
-	
 	
 	public static void initializeStaticValues(int rows, int columns) {
 		numberRows = rows;
 		numberColumns = columns;
 	}
+	
+	public String toString(){
+		return "road " + this.row + " " + this.column + " " + this.numberVehicles + " " + this.roadFailure + "\n";  
+	}  
 }

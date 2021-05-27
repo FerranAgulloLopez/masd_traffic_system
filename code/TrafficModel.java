@@ -15,8 +15,6 @@ public class TrafficModel {
 	private Map<Integer, Road> roads = new HashMap<>();
 	private List<String> modelChanges = new ArrayList<>();
 	
-	private TrafficView view;
-	
 
     public TrafficModel(int rows, int columns) {
 		this.rows = rows + 2;
@@ -31,26 +29,22 @@ public class TrafficModel {
 		}
 		
 		// create vertical roads
-		System.out.println("create!!!!!!!!!!!!!!! roads");
-		Road.initializeStaticValues(rows, columns);
+		Road.initializeStaticValues(this.rows, this.columns);
 		for (int column = 1; column < (this.columns - 1); ++column) {
 			for (int row = 0; row < (this.rows - 1); ++row) {
 				Road verticalRoad = new Road(true, row, column, 0, false);
 				this.roads.put(verticalRoad.getId(), verticalRoad);
 			}
-		}
-		
-		
-		// run view
-		this.view = new TrafficView(this.rows, this.columns, this);
-		this.view.setVisible(true);
+		}		
     }
 	
 	public void createRepairVehicle() {
 		Queue<Integer> aux = new LinkedList<>();
 		aux.add(2);
 		aux.add(2);
-		Vehicle repairVehicle = new Vehicle(0, 1, "repair", aux);
+		Vehicle repairVehicle = new Vehicle(0, 1, "repair", aux);  // TODO change static init position to random
+		Road road = this.roads.get(Road.generateId(true, 0, 1));
+		road.addVehicle();
 		this.vehicles.add(repairVehicle);
 		System.out.println(this.vehicles);
 	}
@@ -59,12 +53,18 @@ public class TrafficModel {
 		logger.info("move vehicles");
 		List<Vehicle> vehiclesFinished = new ArrayList<>();
 		for (Vehicle vehicle: this.vehicles) {
+			Road road = this.roads.get(Road.generateId(true, vehicle.getRow(), vehicle.getColumn()));
+			road.deleteVehicle();
 			boolean arrived = vehicle.move();
 			if (arrived) {
 				vehiclesFinished.add(vehicle);
 				if (vehicle.getType().equals("repair")) {
 					this.modelChanges.add("-roadFailureBel");
+					road.setRoadFailure(false);
 				}
+			} else {
+				road = this.roads.get(Road.generateId(true, vehicle.getRow(), vehicle.getColumn()));
+				road.addVehicle();
 			}
 		}
 		this.vehicles.removeAll(vehiclesFinished);
@@ -73,7 +73,6 @@ public class TrafficModel {
 	
 	public void generateRouteFailure() {
 		logger.info("generating route failure");
-		//List<String> intersection_keys = new ArrayList<String>(this.intersections.keySet());
 		List<Integer> road_keys = new ArrayList<>(this.roads.keySet());
 		if (this.roads.size() > 1) {
 			// sample random road that is not in the edge
@@ -85,26 +84,9 @@ public class TrafficModel {
 				roadNotInEdge = !chosen_road.isInEdge();
 			}
 			chosen_road.setRoadFailure(true);
-			
-			
-			/*String intersection1_key = null;
-			String intersection2_key = null;
-			boolean equals = true;
-			while (!equals) {
-				intersection1_key = intersection_keys.get(this.random.nextInt(intersection_keys.size()));
-				intersection2_key = intersection_keys.get(this.random.nextInt(intersection_keys.size()));
-				equals = intersection1_key.equals(intersection2_key);
-			}
-			String routeId = this.generateRouteId(intersection1_key, intersection2_key);*/
-			//this.roadFailures.add(routeId);
 			this.modelChanges.add("+roadFailureBel");
-			//this.view.generateRouteFailure(intersection1_key, intersection2_key);
 		}
 	}
-	
-	/*private String generateRouteId(String intersection1, String intersection2) {
-		return intersection1 + "_" + intersection2;
-	}*/
 	
 	public Map<Integer, Road> getRoads() {
 		return this.roads;
@@ -112,6 +94,14 @@ public class TrafficModel {
 	
 	public List<String> getModelChanges() {
 		return this.modelChanges;
+	}
+	
+	public int getRows(){
+		return this.rows;
+	}
+	
+	public int getColumns() {
+		return this.columns;
 	}
 	
 	public List<String> resetModelChanges() {
