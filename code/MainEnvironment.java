@@ -10,7 +10,7 @@ import java.util.logging.*;
 public class MainEnvironment extends TimeSteppedEnvironment {
 
     private Logger logger = Logger.getLogger("traffic_system.mas2j." + MainEnvironment.class.getName());
-	
+
 	private TrafficModel model;
 
     /** Called before the MAS execution with the args informed in .mas2j */

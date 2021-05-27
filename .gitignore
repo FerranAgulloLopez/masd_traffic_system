@@ -2,3 +2,5 @@ code/bin/**
 APDescription.txt
 MTPs-Main-Container.txt
 .stop___MAS
+*.java~
+*.mas2j~

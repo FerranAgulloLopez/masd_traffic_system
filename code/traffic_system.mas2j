@@ -15,8 +15,6 @@ MAS traffic_system {
     infrastructure: Jade
 
     environment: MainEnvironment(2, 1)  // rows, columns
-	
-	//executionControl: ExecutionController
 
     agents:
         intersection ./agents/intersection.asl #2;
