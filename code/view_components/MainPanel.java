@@ -46,11 +46,18 @@ public class MainPanel extends JPanel {
 		this.intersectionLights = new IntersectionLights(g2d, Math.round(edge_free_space));
 		
 		// draw horizontal lines
-		for (int row = 0; row < (this.rows - 1); ++row) {
-			float height = (row + 1) * height_split_size;
+		for (int row = 1; row < (this.rows - 1); ++row) {
+			float height = row * height_split_size;
 			g2d.setStroke(lineStroke);
 			g2d.setPaint(Color.black);
 			g2d.draw(new Line2D.Double(edge_free_space, height, total_width - edge_free_space, height));
+			
+			// draw info rectangles
+			int y_rectangle_corner = this.roadInfoRectangle.computeYRectangleCorner(false, height_split_size, row);
+			for (int column = 0; column < (this.columns - 1); ++column) {
+				int x_rectangle_corner = this.roadInfoRectangle.computeXRectangleCorner(false, width_split_size, column);
+				this.drawInfoRectangle(y_rectangle_corner, x_rectangle_corner, false, row, column);		
+			}
 		}
 
 		// draw vertical lines
@@ -61,9 +68,9 @@ public class MainPanel extends JPanel {
 			g2d.draw(new Line2D.Double(width, edge_free_space, width, total_height - edge_free_space));
 			
 			// draw info rectangles
-			int x_rectangle_corner = this.roadInfoRectangle.computeXRectangleCorner(width_split_size, column);
+			int x_rectangle_corner = this.roadInfoRectangle.computeXRectangleCorner(true, width_split_size, column);
 			for (int row = 0; row < (this.rows - 1); ++row) {
-				int y_rectangle_corner = this.roadInfoRectangle.computeYRectangleCorner(height_split_size, row);
+				int y_rectangle_corner = this.roadInfoRectangle.computeYRectangleCorner(true, height_split_size, row);
 				this.drawInfoRectangle(y_rectangle_corner, x_rectangle_corner, true, row, column);		
 			}
 		}

@@ -70,11 +70,19 @@ public class RoadInfoRectangle {
 		return this.rectangle_width;
 	}
 	
-	public int computeYRectangleCorner(float height_split_size, int row) {
-		return Math.round(height_split_size * row + height_split_size / 2 - this.rectangle_height / 2);
+	public int computeYRectangleCorner(boolean isVertical, float height_split_size, int row) {
+		if (isVertical) {
+			return Math.round(height_split_size * row + height_split_size / 2 - this.rectangle_height / 2);
+		} else {
+			return Math.round(height_split_size * row - this.rectangle_height / 2);
+		}
 	}
 	
-	public int computeXRectangleCorner(float width_split_size, int column) {
-		return Math.round(width_split_size * column - this.rectangle_width / 2);
+	public int computeXRectangleCorner(boolean isVertical, float width_split_size, int column) {
+		if (isVertical) {
+			return Math.round(width_split_size * column - this.rectangle_width / 2);
+		} else {
+			return Math.round(width_split_size * column + width_split_size / 2 - this.rectangle_width / 2);
+		}
 	}
 }

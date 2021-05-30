@@ -106,7 +106,7 @@ public class MainEnvironment extends TimeSteppedEnvironment {
     }
 	
 	private void updatePercepts() {
-		clearPercepts("road_agent_4"); // TODO solve this
+		clearPercepts("road_agent_6"); // TODO solve this
 		List<String> beliefChanges = this.model.getModelChanges();
 		try {  // TODO do better
 			for (String beliefChange: beliefChanges) {
@@ -132,12 +132,12 @@ public class MainEnvironment extends TimeSteppedEnvironment {
         logger.info("start step " + step);
 		if (this.model != null) {
 			this.view.repaint();
-			try {
+			/*try {
 				// to wait for painting to be done
-				Thread.sleep(2000);  // TODO improve!!!
+				Thread.sleep(1000);  // TODO improve!!!
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-			}
+			}*/
 			this.model.moveVehicles();
 			
 			if (step == 2) {

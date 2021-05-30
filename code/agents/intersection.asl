@@ -56,8 +56,6 @@ compute_overall_intersection_punctuation(TotalPunctuation) :- .findall(Punctuati
 	 ?compute_road_punctuation(VehiclesFromRoad, VehiclesFromIntersection, Punctuation);
 	 -road_punctuation(RoadAgent, _);
      +road_punctuation(RoadAgent, Punctuation);
-	 .concat("2. Road punctuation ", RoadAgent, " ", VehiclesFromRoad, " ", VehiclesFromIntersection, ToPrintMessage);
-     .print(ToPrintMessage);
 	 !update_roads_punctuation(L).
 	 
 @URP2
@@ -66,8 +64,6 @@ compute_overall_intersection_punctuation(TotalPunctuation) :- .findall(Punctuati
   	 ?compute_road_punctuation(VehiclesFromRoad, 0, Punctuation);
 	 -road_punctuation(RoadAgent, _);
      +road_punctuation(RoadAgent, Punctuation);
-	 .concat("3. Road punctuation ", RoadAgent, " ", VehiclesFromRoad, " null", ToPrintMessage);
-     .print(ToPrintMessage);
 	 !update_roads_punctuation(L).
   
 @URP3

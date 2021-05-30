@@ -2,14 +2,13 @@ import java.util.*;
 import java.util.logging.*;
 	
 public class Vehicle {
-	private int row;
-	private int column;
+	private Road road;
 	private String type;
-	private Queue<Integer> path;  // 0 -> up, 1 -> right, 2 -> down, 3 -> left  --> inverse clockwise
+	private Queue<Integer> path;  // moving to top/right: 0 -> up, 1 -> right, 2 -> down, 3 -> left  --> inverse clockwise
+								  // moving to bottom/left: 4 -> up, 5 -> right, 6 -> down, 7 -> left  --> inverse clockwise
 	
-	public Vehicle(int row, int column, String type, Queue<Integer> path) {
-		this.row = row;
-		this.column = column;
+	public Vehicle(Road road, String type, Queue<Integer> path) {
+		this.road = road;
 		this.type = type;  // TODO transform to enum
 		this.path = path;
 	}
@@ -18,38 +17,78 @@ public class Vehicle {
 		int greenDirection = intersection.getGreenDirection();
 		int movement = this.path.peek();
 		boolean canMove = false;
-		switch (movement) {
-			case 0:
+		if (this.road.isVertical()) {
+			if (movement < 4) {
 				canMove = (greenDirection == 2);
-				break;
-			case 1:
-				canMove = (greenDirection == 3);
-				break;
-			case 2:
+			} else {
 				canMove = (greenDirection == 0);
-				break;
-			case 3:
+			}
+		} else {
+			if (movement < 4) {
+				canMove = (greenDirection == 3);
+			} else {
 				canMove = (greenDirection == 1);
-				break;
+			}
 		}
 		return canMove;
 	}
 	
-	public boolean move() {
+	public boolean move(Map<Integer, Road> roads) {
 		int movement = this.path.poll();
-		switch (movement) {
-			case 0:
-				this.row -= 1;
-				break;
-			case 1:
-				this.column -= 1;
-				break;
-			case 2:
-				this.row += 1;
-				break;
-			case 3:
-				this.column += 1;
-				break;
+		if (road.isVertical()) {
+			switch (movement) {
+				case 0:
+					this.road = roads.get(Road.generateId(true, this.road.getRow() - 1, this.road.getColumn()));
+					break;
+				case 1:
+					this.road = roads.get(Road.generateId(false, this.road.getRow(), this.road.getColumn()));
+					break;
+				case 2:
+					// no change
+					break;
+				case 3:
+					this.road = roads.get(Road.generateId(false, this.road.getRow(), this.road.getColumn() - 1));
+					break;
+				case 4:
+					// no change
+					break;
+				case 5:
+					this.road = roads.get(Road.generateId(false, this.road.getRow() + 1, this.road.getColumn()));
+					break;
+				case 6:
+					this.road = roads.get(Road.generateId(true, this.road.getRow() + 1, this.road.getColumn()));
+					break;
+				case 7:
+					this.road = roads.get(Road.generateId(false, this.road.getRow() + 1, this.road.getColumn() - 1));
+					break;
+			}
+		} else {
+			switch (movement) {
+				case 0:
+					this.road = roads.get(Road.generateId(true, this.road.getRow() - 1, this.road.getColumn() + 1));
+					break;
+				case 1:
+					this.road = roads.get(Road.generateId(false, this.road.getRow(), this.road.getColumn() + 1));
+					break;
+				case 2:
+					this.road = roads.get(Road.generateId(true, this.road.getRow(), this.road.getColumn() + 1));
+					break;
+				case 3:
+					// no change
+					break;
+				case 4:
+					this.road = roads.get(Road.generateId(true, this.road.getRow() - 1, this.road.getColumn()));
+					break;
+				case 5:
+					// no change
+					break;
+				case 6:
+					this.road = roads.get(Road.generateId(true, this.road.getRow(), this.road.getColumn()));
+					break;
+				case 7:
+					this.road = roads.get(Road.generateId(false, this.road.getRow(), this.road.getColumn() - 1));
+					break;
+			}
 		}
 		
 		if (this.path.size() == 0) {
@@ -59,12 +98,8 @@ public class Vehicle {
 		}
 	}
 	
-	public int getRow() {
-		return this.row;
-	}
-	
-	public int getColumn() {
-		return this.column;
+	public Road getRoad() {
+		return this.road;
 	}
 	
 	public String getType() {
@@ -72,6 +107,6 @@ public class Vehicle {
 	}
 	
 	public String toString(){
-		return "vehicle " + this.row + " " + this.column + " " + this.type + " " + this.path;  
+		return "vehicle " + this.road + " " + this.type + " " + this.path;  
 	}  
 }

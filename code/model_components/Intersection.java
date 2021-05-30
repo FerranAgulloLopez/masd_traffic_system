@@ -36,20 +36,19 @@ public class Intersection {
 				id = Road.generateId(true, this.row - 1, this.column);
 				break;
 			case 1:
-				id = 0; // TODO implement
+				id = Road.generateId(false, this.row, this.column);
 				break;
 			case 2:
 				id = Road.generateId(true, this.row, this.column);
 				break;
 			case 3:
-				id = 0; // TODO implement
+				id = Road.generateId(false, this.row, this.column - 1);
 				break;
 		}
 		return id;
 	}
 	
 	public void changeGreenDirection(Road road) {
-		System.out.println("_______________" + road);
 		if (road.isVertical() && (road.getRow() < this.row)) {
 			this.greenDirection = 0;
 		} else if (road.isVertical() && (road.getRow() == this.row)) {
@@ -71,10 +70,10 @@ public class Intersection {
 		surroundingRoadIds.add(Road.generateId(true, this.row, this.column));
 		
 		// left
-		// TODO implement
+		surroundingRoadIds.add(Road.generateId(false, this.row, this.column - 1));
 		
 		// right
-		// TODO implement
+		surroundingRoadIds.add(Road.generateId(false, this.row, this.column));
 		
 		return surroundingRoadIds;
 		
@@ -98,10 +97,18 @@ public class Intersection {
 		}
 		
 		// left
-		// TODO implement
+		if ((this.column - 1) > 0) {
+			surroundingIntersectionIds.add(Intersection.generateId(this.row, this.column - 1));
+		} else {
+			surroundingIntersectionIds.add(-1);
+		}
 		
 		// right
-		// TODO implement
+		if ((this.column + 1) < (numberColumns - 1)) {
+			surroundingIntersectionIds.add(Intersection.generateId(this.row, this.column + 1));
+		} else {
+			surroundingIntersectionIds.add(-1);
+		}
 		
 		return surroundingIntersectionIds;
 		

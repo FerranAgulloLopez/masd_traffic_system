@@ -39,14 +39,23 @@ public class TrafficModel {
 				this.roads.put(verticalRoad.getId(), verticalRoad);
 			}
 		}
+		
+		// create horizontal roads
+		for (int row = 1; row < (this.rows - 1); ++row) {
+			for (int column = 0; column < (this.columns - 1); ++column) {
+				Road horizontalRoad = new Road(false, row, column, 0, false);
+				this.roads.put(horizontalRoad.getId(), horizontalRoad);
+			}
+		}
     }
 	
 	public void createRepairVehicle() {
-		Queue<Integer> aux = new LinkedList<>();
+		Queue<Integer> aux = new LinkedList<>(); // TODO ask routeAgent for computing ideal path
+		aux.add(5);
 		aux.add(2);
 		aux.add(2);
-		Vehicle repairVehicle = new Vehicle(0, 1, "repair", aux);  // TODO change static init position to random
 		Road road = this.roads.get(Road.generateId(true, 0, 1));
+		Vehicle repairVehicle = new Vehicle(road, "repair", aux);  // TODO change static init position to random
 		road.addVehicle();
 		this.vehicles.add(repairVehicle);
 		String roadAgentName = "road_agent_" + road.getId();
@@ -58,14 +67,14 @@ public class TrafficModel {
 		logger.info("move vehicles");
 		List<Vehicle> vehiclesFinished = new ArrayList<>();
 		for (Vehicle vehicle: this.vehicles) {
-			Road road = this.roads.get(Road.generateId(true, vehicle.getRow(), vehicle.getColumn()));
+			Road road = vehicle.getRoad();
 			Intersection intersection = this.intersections.get(road.computeIntersectionBottomRightId()); // TODO implement depending of the vehicle move
 			if (vehicle.canMove(intersection)) {
 				road.deleteVehicle();
 				String roadAgentName = "road_agent_" + road.getId();
 				String intersectionAgentName = "intersection_agent_" + intersection.getId();
 				this.modelChanges.add(roadAgentName + ">+vehicle_exit_percept(\"" + intersectionAgentName + "\", 1)"); // TODO implement to work with more vehicles
-				boolean arrived = vehicle.move();
+				boolean arrived = vehicle.move(this.roads);
 				if (arrived) {
 					vehiclesFinished.add(vehicle);
 					if (vehicle.getType().equals("repair")) {
@@ -73,7 +82,7 @@ public class TrafficModel {
 						road.setRoadFailure(false);
 					}
 				} else {
-					road = this.roads.get(Road.generateId(true, vehicle.getRow(), vehicle.getColumn()));
+					road = vehicle.getRoad();
 					roadAgentName = "road_agent_" + road.getId();
 					intersectionAgentName = "intersection_agent_" + road.computeIntersectionTopLeftId();
 					this.modelChanges.add(roadAgentName + ">+vehicle_enter_percept(\"" + intersectionAgentName + "\", 1)");
@@ -91,12 +100,13 @@ public class TrafficModel {
 		if (this.roads.size() > 1) {
 			// sample random road that is not in the edge
 			Road chosen_road = null;
-			boolean roadNotInEdge = false;
+			/*boolean roadNotInEdge = false;
 			while (!roadNotInEdge) {
 				int road_key = road_keys.get(this.random.nextInt(road_keys.size()));
 				chosen_road = this.roads.get(road_key);
 				roadNotInEdge = !chosen_road.isInEdge();
-			}
+			}*/
+			chosen_road = this.roads.get(Road.generateId(true, 1, 2));  // static for the demo
 			chosen_road.setRoadFailure(true);
 			String roadAgentName = "road_agent_" + chosen_road.getId();
 			this.modelChanges.add(roadAgentName + ">+road_failure_percept");
