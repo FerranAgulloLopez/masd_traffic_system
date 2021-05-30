@@ -16,12 +16,7 @@ MAS traffic_system {
 
     environment: MainEnvironment(2, 1)  // rows, columns
 
-    agents:
-        intersection ./agents/intersection.asl #2;
-
-        road ./agents/road.asl;
-
-        problemSolver ./agents/problemSolver.asl;
+    agents: problemSolver ./agents/problemSolver.asl #1;
 		
 	classpath: "./*.jar";
 

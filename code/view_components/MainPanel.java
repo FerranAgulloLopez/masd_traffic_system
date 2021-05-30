@@ -13,6 +13,7 @@ public class MainPanel extends JPanel {
 	private int columns;
 	private TrafficModel model;
 	private RoadInfoRectangle roadInfoRectangle;
+	private IntersectionLights intersectionLights;
 	
 	public MainPanel(int rows, int columns, TrafficModel model) {			
 		this.rows = rows;
@@ -42,6 +43,7 @@ public class MainPanel extends JPanel {
 		float edge_free_space = 10;
 		BasicStroke lineStroke = new BasicStroke(3.0f);
 		this.roadInfoRectangle = new RoadInfoRectangle(g2d, total_height, total_width);
+		this.intersectionLights = new IntersectionLights(g2d, Math.round(edge_free_space));
 		
 		// draw horizontal lines
 		for (int row = 0; row < (this.rows - 1); ++row) {
@@ -65,11 +67,20 @@ public class MainPanel extends JPanel {
 				this.drawInfoRectangle(y_rectangle_corner, x_rectangle_corner, true, row, column);		
 			}
 		}
+		
+		// draw intersection lights
+		for (int row = 1; row < (this.rows - 1); ++row) {
+			int intersectionY = this.intersectionLights.computeIntersectionY(height_split_size, row);
+			for (int column = 1; column < (this.columns - 1); ++column) {
+				int intersectionX = this.intersectionLights.computeIntersectionX(width_split_size, column);
+				Intersection intersection = this.model.getIntersections().get(Intersection.generateId(row, column));
+				this.intersectionLights.draw(intersectionY, intersectionX, intersection);
+			}
+		}
 	}
 	
 	private void drawInfoRectangle(int y_rectangle_corner, int x_rectangle_corner, boolean isVertical, int row, int column)  {
 		Road road = this.model.getRoads().get(Road.generateId(isVertical, row, column));
-		System.out.print(road + " " + row + " " + column);
 		this.roadInfoRectangle.draw(y_rectangle_corner, x_rectangle_corner, road);
 	}
 

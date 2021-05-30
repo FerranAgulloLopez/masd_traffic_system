@@ -1,6 +1,8 @@
 // Agent problemSolver in project traffic_system.mas2j
 
 /* Initial beliefs and rules */
+// know the position of all the repair vehicles
+// send the one closest to the position of failure
 
 /* Initial goals */
 

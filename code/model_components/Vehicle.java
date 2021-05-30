@@ -5,13 +5,34 @@ public class Vehicle {
 	private int row;
 	private int column;
 	private String type;
-	private Queue<Integer> path;  // inverse clock -> north, west, south and east
+	private Queue<Integer> path;  // 0 -> up, 1 -> right, 2 -> down, 3 -> left  --> inverse clockwise
 	
 	public Vehicle(int row, int column, String type, Queue<Integer> path) {
 		this.row = row;
 		this.column = column;
 		this.type = type;  // TODO transform to enum
 		this.path = path;
+	}
+	
+	public boolean canMove(Intersection intersection) {
+		int greenDirection = intersection.getGreenDirection();
+		int movement = this.path.peek();
+		boolean canMove = false;
+		switch (movement) {
+			case 0:
+				canMove = (greenDirection == 2);
+				break;
+			case 1:
+				canMove = (greenDirection == 3);
+				break;
+			case 2:
+				canMove = (greenDirection == 0);
+				break;
+			case 3:
+				canMove = (greenDirection == 1);
+				break;
+		}
+		return canMove;
 	}
 	
 	public boolean move() {

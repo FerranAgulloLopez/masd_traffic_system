@@ -11,7 +11,7 @@ public class TrafficModel {
 	private int rows;
 	private int columns;
 	private List<Vehicle> vehicles = new ArrayList<>();
-	private Map<String, Intersection> intersections = new HashMap<>();
+	private Map<Integer, Intersection> intersections = new HashMap<>();
 	private Map<Integer, Road> roads = new HashMap<>();
 	private List<String> modelChanges = new ArrayList<>();
 	
@@ -21,10 +21,13 @@ public class TrafficModel {
 		this.columns = columns + 2;
 		
 		// create intersections
-		for (int i = 0; i < rows; ++i) {
-			for (int j = 0; j < columns; ++j) {
-				Intersection intersection = new Intersection(i + 1, j + 1, 0);
-				intersections.put(intersection.getId(), intersection);
+		Intersection.initializeStaticValues(this.rows, this.columns);
+		for (int row = 1; row < (this.rows - 1); ++row) {
+			for (int column = 1; column < (this.columns - 1); ++column) {
+				//int greenDirection = this.random.nextInt(4);
+				int greenDirection = 2; //TODO do well
+				Intersection intersection = new Intersection(row, column, greenDirection);
+				this.intersections.put(intersection.getId(), intersection);			
 			}
 		}
 		
@@ -35,7 +38,7 @@ public class TrafficModel {
 				Road verticalRoad = new Road(true, row, column, 0, false);
 				this.roads.put(verticalRoad.getId(), verticalRoad);
 			}
-		}		
+		}
     }
 	
 	public void createRepairVehicle() {
@@ -46,7 +49,9 @@ public class TrafficModel {
 		Road road = this.roads.get(Road.generateId(true, 0, 1));
 		road.addVehicle();
 		this.vehicles.add(repairVehicle);
-		System.out.println(this.vehicles);
+		String roadAgentName = "road_agent_" + road.getId();
+		String intersectionAgentName = "intersection_agent_" + road.computeIntersectionTopLeftId();
+		this.modelChanges.add(roadAgentName + ">+vehicle_enter_percept(\"" + intersectionAgentName + "\", 1)");
 	}
 	
 	public void moveVehicles() {
@@ -54,17 +59,26 @@ public class TrafficModel {
 		List<Vehicle> vehiclesFinished = new ArrayList<>();
 		for (Vehicle vehicle: this.vehicles) {
 			Road road = this.roads.get(Road.generateId(true, vehicle.getRow(), vehicle.getColumn()));
-			road.deleteVehicle();
-			boolean arrived = vehicle.move();
-			if (arrived) {
-				vehiclesFinished.add(vehicle);
-				if (vehicle.getType().equals("repair")) {
-					this.modelChanges.add("-roadFailureBel");
-					road.setRoadFailure(false);
+			Intersection intersection = this.intersections.get(road.computeIntersectionBottomRightId()); // TODO implement depending of the vehicle move
+			if (vehicle.canMove(intersection)) {
+				road.deleteVehicle();
+				String roadAgentName = "road_agent_" + road.getId();
+				String intersectionAgentName = "intersection_agent_" + intersection.getId();
+				this.modelChanges.add(roadAgentName + ">+vehicle_exit_percept(\"" + intersectionAgentName + "\", 1)"); // TODO implement to work with more vehicles
+				boolean arrived = vehicle.move();
+				if (arrived) {
+					vehiclesFinished.add(vehicle);
+					if (vehicle.getType().equals("repair")) {
+						this.modelChanges.add(roadAgentName + ">-road_failure_solved_percept");
+						road.setRoadFailure(false);
+					}
+				} else {
+					road = this.roads.get(Road.generateId(true, vehicle.getRow(), vehicle.getColumn()));
+					roadAgentName = "road_agent_" + road.getId();
+					intersectionAgentName = "intersection_agent_" + road.computeIntersectionTopLeftId();
+					this.modelChanges.add(roadAgentName + ">+vehicle_enter_percept(\"" + intersectionAgentName + "\", 1)");
+					road.addVehicle();
 				}
-			} else {
-				road = this.roads.get(Road.generateId(true, vehicle.getRow(), vehicle.getColumn()));
-				road.addVehicle();
 			}
 		}
 		this.vehicles.removeAll(vehiclesFinished);
@@ -84,12 +98,17 @@ public class TrafficModel {
 				roadNotInEdge = !chosen_road.isInEdge();
 			}
 			chosen_road.setRoadFailure(true);
-			this.modelChanges.add("+roadFailureBel");
+			String roadAgentName = "road_agent_" + chosen_road.getId();
+			this.modelChanges.add(roadAgentName + ">+road_failure_percept");
 		}
 	}
 	
 	public Map<Integer, Road> getRoads() {
 		return this.roads;
+	}
+	
+	public Map<Integer, Intersection> getIntersections() {
+		return this.intersections;
 	}
 	
 	public List<String> getModelChanges() {

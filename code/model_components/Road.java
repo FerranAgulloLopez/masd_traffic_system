@@ -6,6 +6,7 @@ public class Road {
 	private int id;
 	private int row;
 	private int column;
+	private boolean isVertical;
 	private int numberVehicles;
 	private boolean roadFailure;  // false -> good state; true -> bad state
 	
@@ -16,18 +17,47 @@ public class Road {
 		this.id = this.generateId(isVertical, row, column);
 		this.row = row;
 		this.column = column;
+		this.isVertical = isVertical;
 		this.numberVehicles = numberVehicles;
 		this.roadFailure = roadFailure;
 	}
 	
 	public static int generateId(boolean isVertical, int row, int column) {
 		int aux = row * numberColumns + column;
-		int constant = (isVertical == true) ? 0 : (numberRows * numberColumns);
+		int constant = (isVertical) ? 0 : (numberRows * numberColumns);
 		return aux + constant;
+	}
+	
+	public int computeIntersectionTopLeftId() {
+		if (this.isVertical) {
+			return Intersection.generateId(this.row - 1, this.column);
+		} else {
+			return Intersection.generateId(this.row, this.column - 1);
+		}
+	}
+	
+	public int computeIntersectionBottomRightId() {
+		if (this.isVertical) {
+			return Intersection.generateId(this.row + 1, this.column);
+		} else {
+			return Intersection.generateId(this.row, this.column + 1);
+		}
 	}
 	
 	public int getId() {
 		return this.id;
+	}
+	
+	public int getRow() {
+		return this.row;
+	}
+	
+	public int getColumn() {
+		return this.column;
+	}
+	
+	public boolean isVertical() {
+		return this.isVertical;
 	}
 	
 	public void setRoadFailure(boolean roadFailure){

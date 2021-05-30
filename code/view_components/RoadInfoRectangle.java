@@ -8,6 +8,7 @@ import javax.swing.*;
 
 
 /** class that implements the View of the Traffic System application */
+// TODO could be fully static
 public class RoadInfoRectangle {
 	
 	private static final String rectangle_text1 = "Number vehicles -> 0";
