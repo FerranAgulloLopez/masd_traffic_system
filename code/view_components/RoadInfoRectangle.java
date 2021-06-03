@@ -8,7 +8,6 @@ import javax.swing.*;
 
 
 /** class that implements the View of the Traffic System application */
-// TODO could be fully static
 public class RoadInfoRectangle {
 	
 	private static final String rectangle_text1 = "Number vehicles -> 0";
@@ -33,7 +32,6 @@ public class RoadInfoRectangle {
 		int text_descent = fontMetrics.getDescent();
 		this.text_lateral_space = fontMetrics.stringWidth(" ");
 		
-		//this.rectangle_space_from_line = 0.005f * total_width;
 		this.rectangle_height = char_height * 2 + text_descent * 2;
 		this.rectangle_width = Math.max(text_width1, text_width2) + this.text_lateral_space * 2;
     }

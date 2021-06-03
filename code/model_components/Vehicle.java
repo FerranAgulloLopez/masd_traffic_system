@@ -9,7 +9,7 @@ public class Vehicle {
 	
 	public Vehicle(Road road, String type, Queue<Integer> path) {
 		this.road = road;
-		this.type = type;  // TODO transform to enum
+		this.type = type;
 		this.path = path;
 	}
 	

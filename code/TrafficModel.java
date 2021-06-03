@@ -25,7 +25,7 @@ public class TrafficModel {
 		for (int row = 1; row < (this.rows - 1); ++row) {
 			for (int column = 1; column < (this.columns - 1); ++column) {
 				//int greenDirection = this.random.nextInt(4);
-				int greenDirection = 2; //TODO do well
+				int greenDirection = 2;  // static for the demo
 				Intersection intersection = new Intersection(row, column, greenDirection);
 				this.intersections.put(intersection.getId(), intersection);			
 			}
@@ -50,12 +50,12 @@ public class TrafficModel {
     }
 	
 	public void createRepairVehicle() {
-		Queue<Integer> aux = new LinkedList<>(); // TODO ask routeAgent for computing ideal path
+		Queue<Integer> aux = new LinkedList<>();
 		aux.add(5);
 		aux.add(2);
 		aux.add(2);
 		Road road = this.roads.get(Road.generateId(true, 0, 1));
-		Vehicle repairVehicle = new Vehicle(road, "repair", aux);  // TODO change static init position to random
+		Vehicle repairVehicle = new Vehicle(road, "repair", aux);  // static for the demo
 		road.addVehicle();
 		this.vehicles.add(repairVehicle);
 		String roadAgentName = "road_agent_" + road.getId();
@@ -68,12 +68,12 @@ public class TrafficModel {
 		List<Vehicle> vehiclesFinished = new ArrayList<>();
 		for (Vehicle vehicle: this.vehicles) {
 			Road road = vehicle.getRoad();
-			Intersection intersection = this.intersections.get(road.computeIntersectionBottomRightId()); // TODO implement depending of the vehicle move
+			Intersection intersection = this.intersections.get(road.computeIntersectionBottomRightId());
 			if (vehicle.canMove(intersection)) {
 				road.deleteVehicle();
 				String roadAgentName = "road_agent_" + road.getId();
 				String intersectionAgentName = "intersection_agent_" + intersection.getId();
-				this.modelChanges.add(roadAgentName + ">+vehicle_exit_percept(\"" + intersectionAgentName + "\", 1)"); // TODO implement to work with more vehicles
+				this.modelChanges.add(roadAgentName + ">+vehicle_exit_percept(\"" + intersectionAgentName + "\", 1)");
 				boolean arrived = vehicle.move(this.roads);
 				if (arrived) {
 					vehiclesFinished.add(vehicle);

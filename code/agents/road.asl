@@ -13,12 +13,11 @@
 
 +road_failure_percept: true
   <- .print("A failure occured in my road");
-     .send(problemSolver, tell, roadFailureMessage); // send an achieve message
+     .send(problemSolver, tell, roadFailureMessage);
 	 -road_failure_percept.
 	 
 -road_failure_solved_percept: true
-  <- .print("The failure was solved in my road"). 
-     //.send(problemSolver, tell, roadFailureMessage).
+  <- .print("The failure was solved in my road").
 
 +vehicle_enter_percept(FromI, N): vehicles_moving_to_I_belief(ToI, NI) 
   & FromI \== ToI

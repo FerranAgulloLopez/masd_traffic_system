@@ -8,7 +8,6 @@ import javax.swing.*;
 
 
 /** class that implements the View of the Traffic System application */
-// TODO could be fully static
 public class IntersectionLights {
 	
 	private static final BasicStroke circleStroke = new BasicStroke(1.0f);

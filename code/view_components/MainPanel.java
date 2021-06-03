@@ -22,7 +22,6 @@ public class MainPanel extends JPanel {
 	}
 	
 	private void doDrawing(Graphics g) {
-		//TODO check why it appears two times at the start of the execution
 		
 		Graphics2D g2d = (Graphics2D) g.create();
 
@@ -31,8 +30,6 @@ public class MainPanel extends JPanel {
 
 		g2d.setRenderingHint(RenderingHints.KEY_RENDERING,
 							 RenderingHints.VALUE_RENDER_QUALITY);
-
-		//this.setBackground(Color.white);
 		
 		Dimension dimension = getSize();
 		int total_height = dimension.height;
